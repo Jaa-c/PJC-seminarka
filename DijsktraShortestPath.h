@@ -106,11 +106,11 @@ public:
         
         
         stringstream c;
-        c << "Cesta z bodu " << from << " do bodu " << to << ":\n\t" ;
+        c << from << " -> ";
 	for(int i = cesta.size()-1; i>0; i--) {
 	     c << cesta[i] << " -> " ;
 	}        
-	c << to << "\n\tdelka cesty " << D[to] <<  "\n";
+	c << to;
         
         this->result = c.str();
     }

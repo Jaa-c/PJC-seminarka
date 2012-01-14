@@ -159,7 +159,7 @@ int main(int argc, char **argv) {
     }
     
     try {
-        algorithm->find(2, 6);
+        algorithm->find(0, 33);
     }
     catch(char const* string) {
         cout << "CHYBA: \n\t" << string << "\n";
@@ -167,8 +167,9 @@ int main(int argc, char **argv) {
     }
     
     //vypiseme nalezenou cestu
-    cout << algorithm->getPath();
-    cout << algorithm->getLength();
+    cout << "Cesta z bodu " << from << " do bodu " << to << "\n";
+    cout << "\tCesta: " << algorithm->getPath() << "\n";
+    cout << "\tDélka: " << algorithm->getLength() << "\n";
     
     
     delete algorithm;

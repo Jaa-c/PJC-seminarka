@@ -66,7 +66,7 @@ public:
         for(int i = 0; i < size; i++) {
             P[i] = new int[size];
             for(int j =0; j < size; j++) {
-                P[i][j] = -1;
+                P[i][j] = 0;
             }
         }
         
@@ -81,12 +81,16 @@ public:
                 }
             }
         }
-        for(int i = 0; i < size; i++) 
-                for(int j = 0; j < size; j++) 
-                        cout << i << ":" << j << " " << matrix[i][j] <<endl;
-                
-        //this->shortestPath = getPath(matrix, P, from, to);
+
+                    
         
+        if(matrix[from][to] == this->INFINITY)
+            throw "Cesta do daneho bodu neexistuje";
+                
+        this->shortestPath = matrix[from][to];
+
+        string res = getPath(P, from, to);
+        this->result = int2str(from) + " -> " + res + int2str(to);        
         
         delete [] matrix;
         delete [] P;       
@@ -94,16 +98,22 @@ public:
     }
     
 private:
-    int getPath(T** matrix, int** P, int from, int to) {
-        if(matrix[from][to] == this->INFINITY)
-            throw "Cesta do daneho bodu neexistuje";
-        int i = P[from][to];
-        if(from == to) 
-            return 0;
-        cout << matrix[from][to] << endl;
-        return getPath(matrix, P, from, i) +  i + getPath(matrix, P, i, to);
+    string getPath(int** P, int from, int to) {
+        string s;
+        if(P[from][to] == 0) //mezi vrcholy neni jiny vertex            
+            return "";
+        int inter = P[from][to];        
+        s += getPath(P, from, inter);
+        s += int2str(inter) + " -> ";
+        s += getPath(P, inter, to);
+        return s;
     }
     
+    string int2str(int i) {
+        stringstream ss;
+        ss << i;
+        return ss.str();
+    }
     
 
 };
