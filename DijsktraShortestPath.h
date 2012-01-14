@@ -108,7 +108,8 @@ public:
         stringstream c;
         c << from << " -> ";
 	for(int i = cesta.size()-1; i>0; i--) {
-	     c << cesta[i] << " -> " ;
+            if(cesta[i] != from)
+                c << cesta[i] << " -> " ;
 	}        
 	c << to;
         

@@ -115,10 +115,12 @@ parse(ifstream& fileStream, int verticies, int from, int to, int alg) {
             cout << "Using Floyd–Warshall algorithm\n";
             algorithm = new FloydWarshallShortestPath<T>(graf);
             break;
+        default:
+            return 1;
     }
     
     try {
-        algorithm->find(0, 33); //tady se provadi vlastni hledani
+        algorithm->find(from, to); //tady se provadi vlastni hledani
     }
     catch(char const* string) {
         cout << "ERROR: \n\t" << string << "\n";
@@ -207,13 +209,22 @@ int main(int argc, char **argv) {
     }
     
     //tady je treba rozhodnout, s jakym typem budeme pracovat
+    int ret = 0;
     switch(type) {
         case 0:
-            return parse<int>(fileStream, verticies, from, to, alg);
+            ret= parse<int>(fileStream, verticies, from, to, alg);
+            break;
         case 1:
-            return parse<double>(fileStream, verticies, from, to, alg);
+            ret= parse<double>(fileStream, verticies, from, to, alg);
+            break;
         default:
-            return 1;   
+            ret= 1;   
     }
+    
+    if(ret== 0)
+        return 0;
+    
+    cout << "\nNastala chyba programu, ukončuji.\n";
+    return 1;
     
 }
