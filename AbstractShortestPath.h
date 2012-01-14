@@ -6,18 +6,30 @@
 #ifndef ABSTRACTSHORTESTPATH_H
 #define	ABSTRACTSHORTESTPATH_H
 
+#include <map>
+#include <vector>
+
 template<class T> class AbstractShortestPath {
 public:
-    virtual void find(const int from, const int to) const=0;
-    virtual std::string getPath() const=0;
+        
+    
+    virtual void find(const int from, const int to)=0;
     
     T getLength() const {
         return shortestPath;
     };
     
+    std::string getPath() const {
+        return this->result;
+    }
+    
+    
 protected:
     Graph<T>* graf;
     T shortestPath;
+    std::string result;
+    
+    static const T INFINITY = (T) 99999999;
 };
 
 

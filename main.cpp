@@ -7,14 +7,18 @@
 
 #include "Graph.h"
 #include "DijsktraShortestPath.h"
+#include "FloydWarshallShortestpath.h"
 
 using namespace std;
 
 void printUsage(){
-	cout << "\nUsage:\n" <<
-                "\tgraphFile source dest algorithm\n" <<
+	cout << "\nUsage: [graphFile] [source] [dest] [algorithm]\n" <<
+                "\tgraphFile = source file with graph data\n" <<
                 "\tsource, dest = number of the vertex from graphFile\n" <<
-                "\talgorithm = [D|FW]";
+                "\talgorithm = [D|FW|M] \n" <<
+                "\t\tD = Dijkstra's algorithm\n" <<
+                "\t\tFW = Floyd–Warshall algorithm\n" <<
+                "\t\tM = Modified matrix multiplication\n\n";
 }
 
 /**
@@ -55,17 +59,49 @@ int str2int(string line) {
 int main(int argc, char **argv) {
     ifstream fileStream;
     string line;
-
+    
+    int alg = -1;
+    int from, to;
+    
+    /**
+     * Zpracovani argumentu
+     */
     if(argc == 5){
         fileStream.open(argv[1]);
         if(!fileStream.is_open()){
             printUsage();
             return 1;
         }
-    } else {
+        
+        from = str2int(argv[2]);
+        to = str2int(argv[3]);
+        if( from < 0 || to < 0) {
+            printUsage();
+            return 1;
+        }
+        
+        string arg = argv[4];
+        if(arg == "D")
+            alg = 0;
+        else if(arg == "FW")
+            alg = 1;
+        else if(arg == "M")
+            alg = 2;
+        else {
+            printUsage();
+            return 1;
+        }
+         
+        
+    } 
+    else {
         printUsage();
         return 1;
     }
+    
+    /**
+     * Parsovani nacteneho souboru
+     */
     int verticies = 0;
     string first;
     while(getline(fileStream, line)) {
@@ -86,6 +122,7 @@ int main(int argc, char **argv) {
     int currentVertex = -1;
     Graph<int> graf(verticies);
     
+    //naplneni grafu daty
     while(getline(fileStream, line)) {
         if(line == "END") break;
         
@@ -108,9 +145,33 @@ int main(int argc, char **argv) {
         }
     }
     
+    /**
+     * Vytvoreni instace grafu a vyhledani cesty
+     */    
+    AbstractShortestPath<int>* algorithm;
+    switch(alg) {
+        case 0:
+            algorithm = new DijsktraShortestPath<int>(graf);
+            break;
+        case 1:            
+            algorithm = new FloydWarshallShortestPath<int>(graf);
+            break;
+    }
     
-    DijsktraShortestPath<int> dijkstra(graf);
-    dijkstra.find(0, 33);
+    try {
+        algorithm->find(2, 6);
+    }
+    catch(char const* string) {
+        cout << "CHYBA: \n\t" << string << "\n";
+        return 1;
+    }
+    
+    //vypiseme nalezenou cestu
+    cout << algorithm->getPath();
+    cout << algorithm->getLength();
+    
+    
+    delete algorithm;
     
     return 0;
 }
