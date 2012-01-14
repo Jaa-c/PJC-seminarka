@@ -46,11 +46,93 @@ void split(string &line, string &param) {
     }
 }
 
-int str2int(string line) {
+/**
+ * Prevadi string na int/double...
+ * @param line
+ * @return 
+ */
+template <class T>
+T str2t(string line) {
   istringstream is(line);
-  int num;
+  T num;
   is >> num;
   return num;
+}
+
+/**
+ * Dela sechno :)
+ * @param fileStream vstupni soubor
+ * @param verticies pocet vrcholu
+ * @param from vychozi vrchol
+ * @param to cilovy vrchol
+ * @param alg typ algoritmu
+ * @return status
+ */
+template<class T> int  
+parse(ifstream& fileStream, int verticies, int from, int to, int alg) {
+    string first;
+    string line;
+    
+    int destVertex = -1;
+    T length = -1;
+    int currentVertex = -1;
+    
+    Graph<T> graf(verticies);  //instance grafu
+    
+    //naplneni grafu daty
+    while(getline(fileStream, line)) {
+        if(line == "END") break;
+        
+        split(line, first);
+        
+        if(first == "DEFINE") {
+            currentVertex = str2t<int>(line.substr(1,line.length()));
+        }
+        else {
+            destVertex = str2t<int>(first.substr(1,first.length()));
+            length = str2t<T>(line);
+            
+            if(length != -1 && destVertex != -1 && currentVertex != -1) {
+                graf.add(currentVertex, destVertex, length);
+            }
+            else {
+                cout << "error parsing file\n";
+                return 10;
+            }
+        }
+    }
+    
+    /**
+     * Vytvoreni instace grafu a vyhledani cesty
+     */    
+    AbstractShortestPath<T>* algorithm;
+    switch(alg) {
+        case 0:
+            cout << "Using Dijkstra's algorithm\n";
+            algorithm = new DijsktraShortestPath<T>(graf);
+            break;
+        case 1:        
+            cout << "Using Floyd–Warshall algorithm\n";
+            algorithm = new FloydWarshallShortestPath<T>(graf);
+            break;
+    }
+    
+    try {
+        algorithm->find(0, 33); //tady se provadi vlastni hledani
+    }
+    catch(char const* string) {
+        cout << "ERROR: \n\t" << string << "\n";
+        return 1;
+    }
+    
+    //vypiseme nalezenou cestu
+    cout << "Shortest path from " << from << " to " << to << ":\n";
+    cout << "\tPath:   " << algorithm->getPath() << "\n";
+    cout << "\tLength: " << algorithm->getLength() << "\n";
+    
+    delete algorithm;
+    
+    return 0;
 }
 
 /*
@@ -61,6 +143,7 @@ int main(int argc, char **argv) {
     string line;
     
     int alg = -1;
+    int type = -1;
     int from, to;
     
     /**
@@ -73,8 +156,8 @@ int main(int argc, char **argv) {
             return 1;
         }
         
-        from = str2int(argv[2]);
-        to = str2int(argv[3]);
+        from = str2t<int>(argv[2]);
+        to = str2t<int>(argv[3]);
         if( from < 0 || to < 0) {
             printUsage();
             return 1;
@@ -105,10 +188,16 @@ int main(int argc, char **argv) {
     int verticies = 0;
     string first;
     while(getline(fileStream, line)) {
-        if(line == "START") {
+        split(line, first);
+        if(line == "INT")
+            type = 0;
+        else if(line == "DOUBLE")
+            type = 1;
+        
+        if(first == "START") {
             getline(fileStream, line);
             split(line, first);
-            verticies = str2int(line);
+            verticies = str2t<int>(line);
             break;
         }
     }
@@ -117,62 +206,14 @@ int main(int argc, char **argv) {
         return 10;
     }
     
-    int destVertex = -1;
-    int length = -1;
-    int currentVertex = -1;
-    Graph<int> graf(verticies);
-    
-    //naplneni grafu daty
-    while(getline(fileStream, line)) {
-        if(line == "END") break;
-        
-        split(line, first);
-        
-        if(first == "DEFINE") {
-            currentVertex = str2int(line.substr(1,line.length()));
-        }
-        else {
-            destVertex = str2int(first.substr(1,first.length()));
-            length = str2int(line);
-            
-            if(length != -1 && destVertex != -1 && currentVertex != -1) {
-                graf.add(currentVertex, destVertex, length);
-            }
-            else {
-                cout << "error parsing file\n";
-                return 10;
-            }
-        }
-    }
-    
-    /**
-     * Vytvoreni instace grafu a vyhledani cesty
-     */    
-    AbstractShortestPath<int>* algorithm;
-    switch(alg) {
+    //tady je treba rozhodnout, s jakym typem budeme pracovat
+    switch(type) {
         case 0:
-            algorithm = new DijsktraShortestPath<int>(graf);
-            break;
-        case 1:            
-            algorithm = new FloydWarshallShortestPath<int>(graf);
-            break;
+            return parse<int>(fileStream, verticies, from, to, alg);
+        case 1:
+            return parse<double>(fileStream, verticies, from, to, alg);
+        default:
+            return 1;   
     }
     
-    try {
-        algorithm->find(0, 33);
-    }
-    catch(char const* string) {
-        cout << "CHYBA: \n\t" << string << "\n";
-        return 1;
-    }
-    
-    //vypiseme nalezenou cestu
-    cout << "Cesta z bodu " << from << " do bodu " << to << "\n";
-    cout << "\tCesta: " << algorithm->getPath() << "\n";
-    cout << "\tDélka: " << algorithm->getLength() << "\n";
-    
-    
-    delete algorithm;
-    
-    return 0;
 }

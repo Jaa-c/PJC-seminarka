@@ -31,7 +31,7 @@ public:
         //inicializace matice, vsude krome diagonaly nekonecno, diag na 0
         T ** matrix = new T*[size];
         for(int i = 0; i < size; i++) {
-            matrix[i] = new int[size];
+            matrix[i] = new T[size];
             for(int j = 0; j < size; j++) {
                 if(i != j)
                     matrix[i][j] = this->INFINITY;
