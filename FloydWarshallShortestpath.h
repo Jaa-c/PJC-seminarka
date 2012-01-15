@@ -92,8 +92,17 @@ public:
         string res = getPath(P, from, to);
         this->result = int2str(from) + " -> " + res + int2str(to);        
         
+        
+        
+        /**
+         * Mazeme:
+         */
+        for(int i = 0; i < size; i++) {
+                delete [] matrix[i];
+                delete [] P[i];      
+        }        
         delete [] matrix;
-        delete [] P;       
+        delete [] P;
     
     }
     

@@ -11,7 +11,6 @@
 
 template<class T> class AbstractShortestPath {
 public:
-        
     
     virtual void find(const int from, const int to)=0;
     

@@ -132,6 +132,7 @@ parse(ifstream& fileStream, int verticies, int from, int to, int alg) {
     cout << "\tPath:   " << algorithm->getPath() << "\n";
     cout << "\tLength: " << algorithm->getLength() << "\n";
     
+    
     delete algorithm;
     
     return 0;

@@ -29,7 +29,10 @@ public:
             this->verticies[i] = new Vertex<T>(i);
         }
     }
+    
     ~Graph() {
+        for(int i = 0; i < this->num_verticies; i++ )
+            delete this->verticies[i];
         delete [] this->verticies;
     };
     
