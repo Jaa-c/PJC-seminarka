@@ -15,10 +15,10 @@ void printUsage(){
 	cout << "\nUsage: [graphFile] [source] [dest] [algorithm]\n" <<
                 "\tgraphFile = source file with graph data\n" <<
                 "\tsource, dest = number of the vertex from graphFile\n" <<
-                "\talgorithm = [D|FW|M] \n" <<
+                "\talgorithm = [D|FW] \n" <<
                 "\t\tD = Dijkstra's algorithm\n" <<
-                "\t\tFW = Floyd–Warshall algorithm\n" <<
-                "\t\tM = Modified matrix multiplication\n\n";
+                "\t\tFW = Floyd–Warshall algorithm\n";
+                //"\t\tM = Modified matrix multiplication\n\n";
 }
 
 /**
@@ -171,8 +171,8 @@ int main(int argc, char **argv) {
             alg = 0;
         else if(arg == "FW")
             alg = 1;
-        else if(arg == "M")
-            alg = 2;
+        //else if(arg == "M")
+        //    alg = 2;
         else {
             printUsage();
             return 1;
